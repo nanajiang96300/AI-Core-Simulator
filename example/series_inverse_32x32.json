@@ -1,0 +1,13 @@
+{
+  "models": [
+    {
+      "name": "series_inverse_32x32",
+      "batch_size": 96,
+      "matrix_m": 32,
+      "matrix_k": 32,
+      "attributes": {
+        "iterations": "10"
+      }
+    }
+  ]
+}

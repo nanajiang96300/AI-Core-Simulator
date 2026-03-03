@@ -1,244 +1,450 @@
-# ONNXim: A Fast, Cycle-level Multi-core NPU Simulator
-[![Docker Image CI](https://github.com/PSAL-POSTECH/ONNXim/actions/workflows/docker-image.yml/badge.svg)](https://github.com/PSAL-POSTECH/ONNXim/actions/workflows/docker-image.yml)
+# Asim: AI-Core Simulator
 
-ONNXim is a fast cycle-level simulator that can model multi-core NPUs for DNN inference. Its features include the following:
-- Faster simulation speed in comparison to other _detailed_ NPU simulation frameworks (see the figure below).
-- Support for modeling multi-core NPUs.
-- Support for cycle-level simulation of memory (through [Ramulator](https://github.com/CMU-SAFARI/ramulator)) and network-on-chip (through [Booksim2](https://github.com/booksim/booksim2)), which is important for properly modeling memory-bound operations in deep learning.
-- Use of ONNX graphs as DNN model specifications, enabling simulation of DNNs implemented in different deep learning frameworks (e.g., PyTorch and TensorFlow).
-- Support language models that do not use ONNX graphs. Additionally, enable auto-regressive generation phases and iteration-level batching.
+> 原项目 `ONNXim` 的工程化延续版本。当前仓库已用于 AI Core（含 Ascend 风格 Cube/Vector/MTE）与通信相关算子的周期级仿真。
 
-For more details, please refer to our [paper](https://ieeexplore.ieee.org/document/10726822)!
+---
 
-![Speedup](/img/speedup.png)
-**Figure description**: we compare the simulation speed of ONNXim to that of [Accel-sim](https://accel-sim.github.io/) (a GPU simulator with Tensor Core model) as GPUs are widely used for deep learning and such a GPU simulator can be used to study systems for deep learning. We also include [SMAUG](https://github.com/harvard-acc/smaug) in the comparison. On the x-axis, we vary the size of each dimension for an NxNxN GEMM operation.
+## 1. 项目定位
 
-## Requirements
-### OS Distribution
-* ubuntu:20.04 (Recommended)
+`Asim`（AI-Core Simulator）是一个多核 NPU 周期级仿真器，支持两类工作流：
 
-*We have not tested ONNXim on other Linux distributions.*
-### Python(>=3.8) Packages
-* torch >= 1.10.1
-* conan == 1.57.0
-* onnxruntime >= 1.10.0
-* torchvision >= 0.17.2 (Optional: for ONNX graph generation)
-* optimum >= 1.19.0 (Optional: for ONNX graph generation)
+1. **ONNX 模型仿真**（原 ONNXim 主能力）
+2. **C++ 自定义算子/模型仿真**（本项目重点，已用于 Newton–Schulz、MMSE、Series-Inverse、MatMul 等）
 
-### Other Dependencies
-* cmake >= 3.22.1
-* gcc >= 10.5.0
+与仅做算子功能模拟不同，Asim 会显式建模：
+- Core 级执行（Cube / Vector / MTE）
+- 片上 SRAM/SPAD/ACCUM
+- NoC（Simple/Booksim2）
+- DRAM（Simple/Ramulator1/Ramulator2）
 
+因此可以输出周期、利用率、访存行为和指令级 trace。
 
-## ONNX Graph
-ONNXim requires ONNX graph files (.onnx) to simulate DNN models. We provide an example input file for fused ResNet-18 in the `models` directory. If you want to export a new DNN model as an ONNX Graph, you can use the `scripts/generate_*_onnx.py` scripts as shown below.
+---
 
-For ResNet-50:
-```
-$ cd ONNXim
-$ python3 ./scripts/generate_cnn_onnx.py --model resnet50
-```
+## 2. 仓库结构（与你当前工作流相关）
 
-For GPT and BERT:
-```
-$ cd ONNXim
-$ python3 ./scripts/generate_transformer_onnx.py --model gpt2
-$ python3 ./scripts/generate_transformer_onnx.py --model bert
-```
+```text
+src/
+  main.cc                         # 模式分发入口（default/language/*_test）
+  Simulator.cc                    # 主循环 + Trace CSV 导出
+  operations/
+    GemmWS.cc                     # 核心 GEMM tile/指令生成
+    NewtonSchulzOp.cc             # 基线牛顿迭代算子
+    NewtonSchulzOptOp.cc          # 优化版牛顿迭代算子
+  models/
+    NewtonSchulzModel.cc
+    NewtonSchulzOptModel.cc
+    MMSEModel.cc
+    SeriesInverseModel.cc
+    MatmulModel.cc                # 新增 MatMul 测试模型（256x32x256）
 
-## Custom format
-ONNXim support
-------------
+configs/
+  ascend_910b_quiet.json          # 常用 910B 风格配置（24 核）
 
-## Hardware Configuration
-`configs` directory contains example NPU configration files in the JSON format.
+example/
+  newton_schulz_opt_test.json
+  matmul_256x32x256_test.json
 
-```
-  "num_cores" : 4,              // Number of NPU cores
-  "core_freq" : 1000,           // Core's frequency (MHz)
-  "core_print_interval" : 8000, // Interval for printing core statistics (cycles)
-  
-  "core_config" : {
-    // Configuration for Core 0
-    "core_0"  : {
-      // 1. Architecture & Dataflow
-      "core_type" : "systolic_ws",  // Core architecture/Dataflow type (e.g., systolic_ws: Weight Stationary)
-      "core_width" : 128,           // Width of the systolic array
-      "core_height" : 128,          // Height of the systolic array
-
-      // 2. On-Chip Memory
-      "spad_size" : 32768,          // Scratchpad memory size (KB)
-      "accum_spad_size" : 4096,     // Accumulator SRAM size (KB)
-      "sram_width" : 32,            // SRAM word size (Bytes) - Data access granularity
-
-      // 3. Compute Capability & Latency
-      "vector_process_bit" : 65536, // Vector unit processing throughput (bits per cycle)
-      "add_latency" : 1,            // Vector Addition latency (cycles)
-      "mul_latency" : 1,            // Vector Multiplication latency (cycles)
-      "mac_latency" : 1,            // Vector MAC (Multiply-Accumulate) latency (cycles)
-      "div_latency" : 1,            // Vector Division latency (cycles)
-      "exp_latency" : 1,            // Vector Exponential function latency (cycles)
-      "gelu_latency" : 1,           // Vector GeLU activation latency (cycles)
-      "add_tree_latency" : 1,       // Latency of the adder tree in the systolic array (cycles)
-      "scalar_sqrt_latency" : 1,    // Scalar Square Root latency (cycles)
-      "scalar_add_latency" : 1,     // Scalar Addition latency (cycles)
-      "scalar_mul_latency" : 1      // Scalar Multiplication latency (cycles)
-    },
-    "core_1" : { /* ... */ },
-    "core_2" : { /* ... */ },
-    "core_3" : { /* ... */ },
-  },
-
-  "dram_type" : "ramulator",    // DRAM type (ex. ramulator, simple)
-  "dram_freq" : 877,            // DRAM frequency (MHz)
-  "dram_channels": 32,          // Number of DRAM channels
-  "dram_req_size": 32,          // DRAM request size (B)
-  "dram_latency" : 10,          // DRAM latency (cycle)
-  "dram_print_interval": 10000, // DRAM stat print interval (cycle)
-  "dram_config_path" : "../configs/ramulator_configs/HBM-config.cfg", // Ramulator config file path
-
-  "icnt_type" : "simple",               // Interconnect type (ex. booksim, simple)
-  "icnt_latency" : 1,                   // Interconnect latency (cycle)
-  "icnt_freq" : 1000,                   // Interconnect frequency (MHz)
-  "icnt_injection_ports_per_core" : 16, // Interconnect injection ports per core (Requests/cycle)
-  "icnt_config_path" : "../configs/booksim2_configs/fly_c64_m32.icnt", // Booksim2 config file path (Optional)
-
-  "precision" : 2,              // Element's precision in tensor (Byte)
-  "layout" : "NHWC",            // Data Layout
-  "scheduler" : "simple"        // Scheduler type (ex. simple, spatial_split, time_multiplex, partition_cpu)
-```
-------------
-
-# Getting Started
-This section describes how to build and run ONNXim with a container-based method and a manual build method.
-## 1. Container-based Method using Docker (Recommended)
-Build a Docker image using the provided Dockerfile.
-```
-$ git clone https://github.com/PSAL-POSTECH/ONNXim.git 
-$ cd ONNXim
-$ docker build . -t onnxim
+visualizer_png.py                 # CSV -> 时序图 PNG
+DOCS/                             # 算子开发和实验日志文档
 ```
 
-Run the docker image and the simulator.
-```
-$ docker run -it onnxim
-(docker) cd /workspace/ONNXim
-(docker) ./build/bin/Simulator --config ./configs/systolic_ws_128x128_c4_simple_noc_tpuv4.json --model ./example/models_list.json
+---
+
+## 3. 环境与编译
+
+## 3.1 依赖
+
+- Linux（推荐 Ubuntu）
+- `python3`
+- `cmake`
+- `gcc/g++`
+- `conan`（若你的本地流程依赖）
+
+Python 依赖（至少用于可视化）：
+
+```bash
+python3 -m pip install -r requirements.txt
 ```
 
+## 3.2 初始化与构建
 
-## 2. Manual Method
-### Installation
-```
-$ git clone https://github.com/PSAL-POSTECH/ONNXim.git
-$ cd ONNXim
-$ git submodule update --recursive --init
-```
-### Build
-```
-$ mkdir build && cd build
-$ conan install ..
-$ cmake ..
-$ make -j
-```
-### Run Simulator
-```
-$ cd ..
-$ ./build/bin/Simulator --config ./configs/systolic_ws_128x128_c4_simple_noc_tpuv4.json --model ./example/models_list.json
+```bash
+git clone https://github.com/PSAL-POSTECH/ONNXim.git Asim
+cd Asim
+git submodule update --init --recursive
+
+cmake -S . -B build
+cmake --build build -j$(nproc)
 ```
 
-ONNXim supports custom model formats, with models like Llama and OPT implemented using this feature. Based on this, iteration-level scheduling policy is implemented.
+可执行文件：`build/bin/Simulator`
 
-Below is an example of how to execute it (**Note**: You have to add `--language` option):
+---
 
-```
-$ ./build/bin/Simulator --config ./configs/systolic_ws_128x128_c4_simple_noc_tpuv4.json --models_list example/language_models.json --mode language
+## 4. 运行模式总览
+
+`src/main.cc` 当前支持以下 `--mode`：
+
+- `default`：ONNX 路径
+- `language`：语言模型 custom trace 路径
+- `ls_test`
+- `newton_schulz_test`
+- `newton_schulz_opt_test`
+- `mmse_test`
+- `series_inverse_test`
+- `matmul_test`
+
+通用参数：
+
+```bash
+./build/bin/Simulator \
+  --config <config_json> \
+  --models_list <models_list_json> \
+  --mode <mode> \
+  --log_level info
 ```
 
-`language_models.json` is structured as follows:
-```
-{
-  "models": [
-    {
-      "name": "opt-125m",
-      "trace_file": "input.csv",
-      "scheduler": "simple",
-      "scheduler_config": {
-        "max_batch_size": 8
-      }
-    }
-  ]
+---
+
+## 5. Ascend 风格 Cube 配置（16x16x16）
+
+在 `configs/ascend_910b_quiet.json`（或 `ascend_910b.json`）中：
+
+```json
+"ascend_cube_model": {
+  "enabled": true,
+  "cube_m": 16,
+  "cube_n": 16,
+  "cube_k": 16,
+  "cube_base_latency": 1
 }
 ```
-- name: Specifies the LLM model to be selected.
-- trace_file: Sets the request trace file.
-- scheduler: Defines the scheduling policy to be used.
 
-------------
-## Result
+含义：
+- `cube_m/n/k`：Cube 基本块大小
+- `enabled=true`：`SystolicWS::get_inst_compute_cycles()` 采用 Cube 分块延迟模型
 
-![Demo](/img/ONNXim_demo.png)
+---
 
-------------
-## Mapping
-ONNXim uses a hierarchical tiling method that can handle large tensors. 
-If the mapping method is not specified, the tiling method from [Gemmini](https://github.com/ucb-bar/gemmini) [DAC'21] is used by default.
+## 6. 新算子如何构建（重点）
 
-### Manual Mapping File (Optional)
-You can specify the mapping by placing a `*.mapping` file in the same folder as the `*.onnx` file.
+可参考：
+- `DOCS/ADD_NEW_OPERATOR.md`
+- `DOCS/NEWTON_SCHULZ_OP_GUIDE.md`
 
-The mapping file is composed of three parts:
+## 6.1 开发路径 A：ONNX 节点接入
 
-1. Total Loop (e.g., `[T] N1 C3 M64 P112 Q112 S7 R7`)
-2. Outer Loop (e.g., `[O] N1 C1 M4 P5 Q6 S1 R1`)
-3. Inner Loop (e.g., `[I] N1 C3 M16 P23 Q22 S7 R7`)
+1. 在 `src/operations/` 新增算子类（继承 `Operation`）
+2. 实现：
+   - 构造函数（读取 attributes / shape）
+   - `initialize_tiles(...)`
+   - `initialize_instructions(...)`
+3. 在 `OperationFactory` 注册 `op_type -> C++ class`
+4. 确认 CMake 能编译到新源文件
 
-where `N` stands for Batch Size, `C` for Input Channel, `M` for Output Channel, `P` for Output Rows, `Q` for Output Columns, `S` for Kernel Rows, `R` for Kernel Columns.
+## 6.2 开发路径 B：纯 C++ 模型接入（推荐做通信算子）
 
-The `Total Loop` provides the overall loop information for the given layer. In the example above, `Total Loop` corresponds to a convolution operation with an output dimension of (N:1, M:64, P:112, Q:112) and a kernel dimension of (C:3, S:7, R:7, M:64).
+1. 在 `src/models/` 新增模型（如 `MatmulModel`）
+2. 在模型内创建 Tensor + Operation 图
+3. 在 `src/main.cc` 新增 mode 分支
+4. 在 `example/*.json` 提供模型配置
 
-The `Outer Loop` specifies how many times the `Inner Loop` needs to be iterated. In this example, the `Total Loop` has `P`=112 and the `Inner Loop` has `P`=23. Therefore, the `Outer Loop` should have `P`=ceiling(112/23)=5.
+当前仓库案例：
+- `NewtonSchulzModel/NewtonSchulzOptModel`
+- `MMSEModel`
+- `SeriesInverseModel`
+- `MatmulModel`
 
-The `Inner Loop` determines the sizes of the input and weight tiles loaded to the scratchpad memory and the size of the output tile mapped to the accumulator.
+---
 
-In this example, assuming a 4-byte (i.e., FP32) data format, the size of the output tile will be 4x16x23x22=32384 bytes. The weight tile size will be 4x16x3x7x7=9408 bytes and the size of the (padded) input tile will be 4x1x3x29x28=9744 bytes. 
+## 7. 构建算子的基础 API（GEMM / VECTOR / 内存搬运）
 
-**Note**: The size of the input and weight tiles should not exceed half the size of the scratchpad memory for double buffering. Similarly, the size of the output tile should not exceed half the size of the accumulator. 
+本节列的是你在 `Operation::initialize_instructions(...)` 里最常直接使用的基础能力。
 
-Below is an example mapping for ResNet-18.
+### 7.1 地址与张量基础 API（所有单元通用）
 
+- `get_operand_addr(operand_id)`：获取输入/输出 tensor 的 DRAM 基地址
+- `make_address(index, dims)`：把逻辑索引映射成线性地址偏移
+- `add_input(...)` / `add_output(...)`：维护算子输入输出关系
+- `check_executable()`：检查输入依赖是否就绪
+
+---
+
+### 7.2 GEMM（Cube 单元）基础 API
+
+#### A) 复用现成 GEMM 算子
+
+- 类：`GemmWS`（`src/operations/GemmWS.cc`）
+- 入口：`initialize_tiles(...)` + `initialize_instructions(...)`
+- 指令核心：`Opcode::GEMM_PRELOAD`（可配 `tile_m/tile_k/tile_n`）
+
+#### B) 在自定义算子里手工发 GEMM 指令
+
+常用写法（示意）：
+
+```cpp
+tile->instructions.push_back(std::make_unique<Instruction>(Instruction{
+  .opcode = Opcode::GEMM_PRELOAD,
+  .dest_addr = accum_addr,
+  .src_addrs = std::vector<addr_type>{act_addr, weight_addr},
+  .tile_m = m_blk,
+  .tile_k = k_blk,
+  .tile_n = n_blk,
+}));
 ```
-[T] N1 C3 M64 P112 Q112 S7 R7 - [O] N1 C1 M4 P5 Q6 S1 R1 - [I] N1 C3 M16 P23 Q22 S7 R7
-[T] N1 C64 M64 P56 Q56 S3 R3 - [O] N1 C1 M4 P3 Q3 S1 R1 - [I] N1 C64 M16 P23 Q22 S3 R3
-[T] N1 C64 M64 P56 Q56 S3 R3 - [O] N1 C1 M4 P3 Q3 S1 R1 - [I] N1 C64 M16 P23 Q22 S3 R3
-[T] N1 C64 M128 P28 Q28 S3 R3 - [O] N1 C2 M8 P2 Q2 S1 R1 - [I] N1 C51 M16 P23 Q22 S3 R3
-[T] N1 C64 M128 P28 Q28 S1 R1 - [O] N1 C1 M8 P2 Q2 S1 R1 - [I] N1 C64 M16 P23 Q22 S1 R1
-[T] N1 C128 M128 P28 Q28 S3 R3 - [O] N1 C1 M8 P2 Q2 S1 R1 - [I] N1 C128 M16 P23 Q22 S3 R3
-[T] N1 C128 M256 P14 Q14 S3 R3 - [O] N1 C2 M7 P1 Q1 S1 R1 - [I] N1 C104 M40 P14 Q14 S3 R3
-[T] N1 C256 M256 P14 Q14 S3 R3 - [O] N1 C2 M7 P1 Q1 S1 R1 - [I] N1 C210 M40 P14 Q14 S3 R3
-[T] N1 C128 M256 P14 Q14 S1 R1 - [O] N1 C1 M7 P1 Q1 S1 R1 - [I] N1 C128 M40 P14 Q14 S1 R1
-[T] N1 C128 M256 P14 Q14 S1 R1 - [O] N1 C1 M7 P1 Q1 S1 R1 - [I] N1 C128 M40 P14 Q14 S1 R1
-[T] N1 C256 M512 P7 Q7 S3 R3 - [O] N1 C3 M5 P1 Q1 S1 R1 - [I] N1 C109 M104 P7 Q7 S3 R3
-[T] N1 C256 M512 P7 Q7 S1 R1 - [O] N1 C1 M4 P1 Q1 S1 R1 - [I] N1 C256 M160 P7 Q7 S1 R1
-[T] N1 C512 M512 P7 Q7 S3 R3 - [O] N1 C5 M5 P1 Q1 S1 R1 - [I] N1 C120 M112 P7 Q7 S3 R3
-[T] N1 C512 M1000 - [O] N1 C1 M5 - [I] N1 C512 M248
+
+用途：
+- 执行 `A x B` 的矩阵乘子块
+- 在 Ascend cube 配置下与 `cube_m/n/k` 一起构成 `16x16x16` 等分块策略
+
+---
+
+### 7.3 VECTOR（向量单元）基础 API
+
+通过 `Instruction.opcode` 发向量计算指令，常用包括：
+
+- `Opcode::ADD`
+- `Opcode::MUL`
+- `Opcode::MAC`
+- `Opcode::DIV`
+- `Opcode::EXP`
+- `Opcode::ADDTREE`
+- `Opcode::LAYERNORM`
+- `Opcode::SOFTMAX`
+
+示意（逐元素加法）：
+
+```cpp
+tile->instructions.push_back(std::make_unique<Instruction>(Instruction{
+  .opcode = Opcode::ADD,
+  .dest_addr = vec_dst,
+  .src_addrs = std::vector<addr_type>{vec_a, vec_b},
+  .compute_size = elem_cnt,
+}));
 ```
 
-------------
-## Future Work
-This current version only supports GEMM, Conv, Attention, GeLU, LayerNorm operations. Other operations will be supported in later versions.
+用途：
+- Newton 中 `R = C - T`、`X = X + R` 等逐元素操作
+- MMSE/归一化中的标量或向量后处理
 
-## Citation
-If you use ONNXim for your research, please cite the following paper.
+---
+
+### 7.4 内存搬运（MTE2/MTE3）基础 API
+
+用于 DRAM <-> SPAD/ACCUM 的数据搬运：
+
+- `Opcode::MOVIN`：从 DRAM 搬入到 SPAD/ACCUM（对应 MTE2）
+- `Opcode::MOVOUT`：从 SPAD/ACCUM 写回 DRAM（对应 MTE3）
+
+示意：
+
+```cpp
+tile->instructions.push_back(std::make_unique<Instruction>(Instruction{
+  .opcode = Opcode::MOVIN,
+  .dest_addr = spad_addr,
+  .src_addrs = dram_addr_list,
+  .size = static_cast<uint32_t>(dram_addr_list.size()),
+}));
+
+tile->instructions.push_back(std::make_unique<Instruction>(Instruction{
+  .opcode = Opcode::MOVOUT,
+  .dest_addr = spad_addr,
+  .src_addrs = dram_out_addr_list,
+  .size = static_cast<uint32_t>(dram_out_addr_list.size()),
+}));
 ```
-@ARTICLE{10726822,
-  author={Ham, Hyungkyu and Yang, Wonhyuk and Shin, Yunseon and Woo, Okkyun and Heo, Guseul and Lee, Sangyeop and Park, Jongse and Kim, Gwangsun},
-  journal={IEEE Computer Architecture Letters}, 
-  title={ONNXim: A Fast, Cycle-Level Multi-Core NPU Simulator}, 
-  year={2024},
-  volume={23},
-  number={2},
-  pages={219-222},
-  keywords={Random access memory;Computational modeling;Vectors;Kernel;Tensors;Runtime;Libraries;Deep learning;Artificial neural networks;Systolic arrays;DNN inference;multi-tenancy;NPU;ONNX;simulator},
-  doi={10.1109/LCA.2024.3484648}}
+
+同步相关：
+- `Opcode::PIPE_BARRIER`：用于 MTE/Cube/Vector 之间的阶段同步
+
+---
+
+### 7.5 推荐的算子构建顺序（模板）
+
+1. `MOVIN`：把 A/B/常量搬到 SPAD
+2. `GEMM_PRELOAD`：做主矩阵乘
+3. `ADD/MUL/...`：做向量后处理
+4. `MOVOUT`：结果写回 DRAM
+
+这个流程与 `NewtonSchulzOp` / `NewtonSchulzOptOp` / `GemmWS` 的实现风格一致。
+
+---
+
+## 8. Tiling 策略怎么做
+
+## 8.1 两个层次要区分
+
+1. **任务层 tiling（tile 分配到 core）**
+   - 例如 Newton：按 batch 切 tile，然后 round-robin 分核
+2. **指令层 tiling（单 tile 内 GEMM 子块）**
+   - 例如 `16x16x16` Cube 块（M/N/K 三维分块）
+
+图上“像一整块”通常是因为：
+- 单核串行执行 + 事件密集，视觉连成条带；
+- 不代表内部没有 16³ 分块。
+
+## 8.2 16x16x16 的直观计算
+
+以 `MatMul: 256x32 * 32x256` 为例：
+
+$$
+\#chunks = \frac{256}{16} \times \frac{256}{16} \times \frac{32}{16} = 16 \times 16 \times 2 = 512
+$$
+
+实际 trace 中可看到 `GEMM` 事件数量就是 512（与公式一致）。
+
+## 8.3 映射来源
+
+- 手工：`models/<model>/<model>.mapping`
+- 自动：若未提供 mapping，使用默认 Gemmini 风格映射
+
+---
+
+## 9. 导出 CSV 与绘制时序图
+
+## 9.1 导出指令级 trace CSV
+
+通过环境变量：
+
+```bash
+export ONNXIM_TRACE_CSV=results/matmul_256x32x256.csv
 ```
+
+可选安全阈值（防死循环/卡死）：
+
+```bash
+export ONNXIM_MAX_CORE_CYCLES=300000
+```
+
+运行示例：
+
+```bash
+./build/bin/Simulator \
+  --config configs/ascend_910b_quiet.json \
+  --models_list example/matmul_256x32x256_test.json \
+  --mode matmul_test \
+  --log_level info
+```
+
+## 9.2 绘制时序图 PNG
+
+当前 `visualizer_png.py` 参数为 `-i/-o`：
+
+```bash
+python3 visualizer_png.py \
+  -i results/matmul_256x32x256.csv \
+  -o results/matmul_256x32x256.png
+```
+
+CSV 列要求（脚本可识别别名）：
+- `unit`
+- `name`
+- `start_cycle`（或 `startcycle`）
+- `end_cycle`（或 `endcycle`）
+
+---
+
+## 10. 已验证示例
+
+## 10.1 Newton–Schulz（优化版）
+
+```bash
+export ONNXIM_TRACE_CSV=results/newton_schulz/newton_opt_96b_32x32.csv
+
+./build/bin/Simulator \
+  --config configs/ascend_910b_quiet.json \
+  --models_list example/newton_schulz_opt_test.json \
+  --mode newton_schulz_opt_test \
+  --log_level info
+
+python3 visualizer_png.py \
+  -i results/newton_schulz/newton_opt_96b_32x32.csv \
+  -o results/newton_schulz/newton_opt_96b_32x32.png
+```
+
+## 10.2 MatMul（单核观察友好）
+
+```bash
+export ONNXIM_TRACE_CSV=results/matmul_256x32x256.csv
+
+./build/bin/Simulator \
+  --config configs/ascend_910b_quiet.json \
+  --models_list example/matmul_256x32x256_test.json \
+  --mode matmul_test \
+  --log_level info
+
+python3 visualizer_png.py \
+  -i results/matmul_256x32x256.csv \
+  -o results/matmul_256x32x256.png
+```
+
+---
+
+## 11. 常见问题与解决办法（实战总结）
+
+## 11.1 新增模型后链接报错：`undefined reference to vtable`
+
+**现象**：新增 `*.cc` 后链接失败。  
+**原因**：构建系统未重新配置，目标文件未纳入。  
+**解决**：
+
+```bash
+cmake -S . -B build
+cmake --build build -j$(nproc)
+```
+
+## 11.2 运行时 `Floating point exception`
+
+**典型原因之一**：`Operation` 属性构造路径中 `target_core` 未正确写入成员，导致后续以错误 core 索引访问配置。  
+**修复点**：`src/operations/Operation.cc`
+
+```cpp
+// 错误
+target_core = target_core;
+
+// 正确
+this->target_core = target_core;
+```
+
+## 11.3 MatMul 形状对不上 / 行列混乱
+
+`GemmWS` 期望权重维度语义与输入/输出一致，MatMul 模型中要特别注意 `weight_shape` 排布。当前 256x32x256 示例采用：
+
+```text
+input_shape  = [batch, M, K]
+weight_shape = [K, N]
+output_shape = [batch, M, N]
+```
+
+## 11.4 图看起来“一整块”，怀疑没有按 16³ 分块
+
+先看统计，不只看图感受。以 256x32x256 为例，`GEMM` 事件数应为 512（16×16×2）。若一致，说明已按 16³ 在指令级切分。
+
+## 11.5 可视化参数不兼容
+
+不同版本脚本参数可能不同。当前仓库版本是 `-i/-o` 风格；若你使用 `--merge-adjacent` 一类参数，请先确认本地脚本版本是否支持。
+
+## 11.6 双缓冲（ping-pong）反而变慢
+
+在 32x32 Newton–Schulz 场景中，常见原因是：
+- kernel 本身 compute-bound，memory overlap 收益有限；
+- super-tile 串行化 + barrier 增多，拉长关键路径。  
+
+详见：
+- `DOCS/NEWTON_SCHULZ_OPT_LOG.md`
+- `DOCS/NEWTON_SCHULZ_PINGPONG_REPORT.md`
+
+---
+
+## 12. 文档导航
+
+- 新算子模板：`DOCS/ADD_NEW_OPERATOR.md`
+- 牛顿算子流程：`DOCS/NEWTON_SCHULZ_OP_GUIDE.md`
+- 牛顿优化迭代日志：`DOCS/NEWTON_SCHULZ_OPT_LOG.md`
+- ping-pong 分析：`DOCS/NEWTON_SCHULZ_PINGPONG_REPORT.md`
+- MMSE/缩放实验：`DOCS/MMSE_SCALING_BASELINE.md`
+
+---
+
+

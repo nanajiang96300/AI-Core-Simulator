@@ -65,7 +65,8 @@ enum class Opcode {
   EXP,
   GELU,
   SWISH,
-  BAR
+  BAR,
+  PIPE_BARRIER
 };
 struct Tile;
 typedef struct {
@@ -92,6 +93,9 @@ typedef struct {
   bool zero_init = false;
   bool last_inst = false;
   Tile* my_tile;
+  // Optional metadata for synthetic barrier / NOP instructions.
+  bool is_barrier = false;
+  uint32_t barrier_type = 0;  // 0: none, 1: MTE->CUBE, 2: CUBE->VECTOR, 3: VECTOR->CUBE, 4: CUBE->MTE
   std::string to_string();
 } Instruction;
 

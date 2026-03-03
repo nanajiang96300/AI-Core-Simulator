@@ -1,0 +1,13 @@
+{
+  "models": [
+    {
+      "name": "mmse_256x128",
+      "batch_size": 96,
+      "matrix_m": 256,
+      "matrix_k": 128,
+      "attributes": {
+        "iterations": "10"
+      }
+    }
+  ]
+}

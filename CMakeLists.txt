@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15.0)
-set(project_name "AiFrameworkSim")
+set(project_name "Asim")
 project(${project_name})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

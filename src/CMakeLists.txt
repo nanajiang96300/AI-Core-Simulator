@@ -9,6 +9,16 @@ file(GLOB_RECURSE SRC_FILES
   "${CMAKE_SOURCE_DIR}/src/*.cc"
 )
 
+# Ensure new custom LS operator, ChannelModel, and TraceLogger sources are linked
+list(APPEND SRC_FILES
+  "${CMAKE_SOURCE_DIR}/src/operations/LSEstimatorOp.cc"
+  "${CMAKE_SOURCE_DIR}/src/models/ChannelModel.cc"
+  "${CMAKE_SOURCE_DIR}/src/TraceLogger.cc"
+  "${CMAKE_SOURCE_DIR}/src/operations/NewtonSchulzOptOp.cc"
+  "${CMAKE_SOURCE_DIR}/src/models/NewtonSchulzOptModel.cc"
+  "${CMAKE_SOURCE_DIR}/src/operations/SeriesInverseOp.cc"
+  "${CMAKE_SOURCE_DIR}/src/models/SeriesInverseModel.cc")
+
 # build
 add_executable(${LIB_NAME} ${SRC_FILES})
 add_library(${LIB_NAME}_lib ${SRC_FILES})

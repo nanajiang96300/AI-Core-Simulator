@@ -51,6 +51,11 @@ const static std::map<std::string, IcntType> icnt_type_map = {
 SimulationConfig initialize_config(json config) {
   SimulationConfig parsed_config;
 
+  json global_cube_model = json::object();
+  if (config.contains("ascend_cube_model") && config["ascend_cube_model"].is_object()) {
+    global_cube_model = config["ascend_cube_model"];
+  }
+
   /* Core configs */
   parsed_config.num_cores = get_config_value<uint32_t>(config, "num_cores");
   parsed_config.core_config = new struct CoreConfig[parsed_config.num_cores];
@@ -68,6 +73,47 @@ SimulationConfig initialize_config(json config) {
     }
     parsed_config.core_config[i].core_width = core_config["core_width"];
     parsed_config.core_config[i].core_height = core_config["core_height"];
+
+    /* Ascend-like Cube configs (P0), allow global defaults + per-core overrides */
+    parsed_config.core_config[i].enable_ascend_cube_model = false;
+    parsed_config.core_config[i].cube_m = 16;
+    parsed_config.core_config[i].cube_n = 16;
+    parsed_config.core_config[i].cube_k = 16;
+    parsed_config.core_config[i].cube_base_latency = 1;
+
+    if (!global_cube_model.is_null()) {
+      if (global_cube_model.contains("enabled")) {
+        parsed_config.core_config[i].enable_ascend_cube_model = global_cube_model["enabled"];
+      }
+      if (global_cube_model.contains("cube_m")) {
+        parsed_config.core_config[i].cube_m = global_cube_model["cube_m"];
+      }
+      if (global_cube_model.contains("cube_n")) {
+        parsed_config.core_config[i].cube_n = global_cube_model["cube_n"];
+      }
+      if (global_cube_model.contains("cube_k")) {
+        parsed_config.core_config[i].cube_k = global_cube_model["cube_k"];
+      }
+      if (global_cube_model.contains("cube_base_latency")) {
+        parsed_config.core_config[i].cube_base_latency = global_cube_model["cube_base_latency"];
+      }
+    }
+
+    if (core_config.contains("enable_ascend_cube_model")) {
+      parsed_config.core_config[i].enable_ascend_cube_model = core_config["enable_ascend_cube_model"];
+    }
+    if (core_config.contains("cube_m")) {
+      parsed_config.core_config[i].cube_m = core_config["cube_m"];
+    }
+    if (core_config.contains("cube_n")) {
+      parsed_config.core_config[i].cube_n = core_config["cube_n"];
+    }
+    if (core_config.contains("cube_k")) {
+      parsed_config.core_config[i].cube_k = core_config["cube_k"];
+    }
+    if (core_config.contains("cube_base_latency")) {
+      parsed_config.core_config[i].cube_base_latency = core_config["cube_base_latency"];
+    }
 
     /* Vector configs */
     parsed_config.core_config[i].vector_process_bit = core_config["vector_process_bit"];

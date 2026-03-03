@@ -5,6 +5,13 @@
 #include "Simulator.h"
 #include "helper/CommandLineParser.h"
 #include "operations/OperationFactory.h"
+#include "models/LanguageModel.h"
+#include "models/ChannelModel.h"
+#include "models/NewtonSchulzModel.h"
+#include "models/NewtonSchulzOptModel.h"
+#include "models/MMSEModel.h"
+#include "models/SeriesInverseModel.h"
+#include "models/MatmulModel.h"
 
 namespace fs = std::filesystem;
 namespace po = boost::program_options;
@@ -69,6 +76,24 @@ int main(int argc, char** argv) {
   } else if (mode == "language") {
     spdlog::info("Running in language mode");
     language_mode = true;
+  } else if (mode == "ls_test") {
+    spdlog::info("Running in LS test mode (ChannelModel)");
+    language_mode = false;
+  } else if (mode == "newton_schulz_test") {
+    spdlog::info("Running in Newton-Schulz test mode (NewtonSchulzModel)");
+    language_mode = false;
+  } else if (mode == "newton_schulz_opt_test") {
+    spdlog::info("Running in Newton-Schulz OPT test mode (NewtonSchulzOptModel)");
+    language_mode = false;
+  } else if (mode == "mmse_test") {
+    spdlog::info("Running in MMSE test mode (MMSEModel)");
+    language_mode = false;
+  } else if (mode == "series_inverse_test") {
+    spdlog::info("Running in Series-inverse test mode (SeriesInverseModel)");
+    language_mode = false;
+  } else if (mode == "matmul_test") {
+    spdlog::info("Running in MatMul test mode (MatmulModel)");
+    language_mode = false;
   } else {
     spdlog::error("Invalid mode: {}", mode);
     return 1;
@@ -88,7 +113,7 @@ int main(int argc, char** argv) {
   models_list_file.close();
   auto simulator = std::make_unique<Simulator>(config, language_mode);
   for (json model_config : models_list["models"]) {
-    if(language_mode) {
+    if(language_mode && mode == "language") {
       std::string model_name = model_config["name"];
       std::string model_path =
         fmt::format("{}/{}/{}.json", model_base_path, "language_models", model_name);
@@ -105,6 +130,46 @@ int main(int argc, char** argv) {
       auto model = std::make_unique<LanguageModel>(model_json, config, model_name);
       spdlog::info("Register Language Model: {}", model_name);
       simulator->register_language_model(model_config, std::move(model));
+    }
+    else if (mode == "ls_test") {
+      // LS channel estimation test: bypass ONNX and build ChannelModel
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<ChannelModel>(model_config, config, model_name);
+      spdlog::info("Register ChannelModel (LS test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "newton_schulz_test") {
+      // Newton-Schulz matrix inverse test: pure C++ graph, no ONNX
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<NewtonSchulzModel>(model_config, config, model_name);
+      spdlog::info("Register NewtonSchulzModel (Newton-Schulz test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "newton_schulz_opt_test") {
+      std::string model_name = model_config["name"]; 
+      auto model = std::make_unique<NewtonSchulzOptModel>(model_config, config, model_name);
+      spdlog::info("Register NewtonSchulzOptModel (Newton-Schulz OPT test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "mmse_test") {
+      // MMSE estimator test: pure C++ graph, no ONNX
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<MMSEModel>(model_config, config, model_name);
+      spdlog::info("Register MMSEModel (MMSE test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "series_inverse_test") {
+      // Neumann-series matrix inverse test: pure C++ graph, no ONNX
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<SeriesInverseModel>(model_config, config, model_name);
+      spdlog::info("Register SeriesInverseModel (Series-inverse test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "matmul_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<MatmulModel>(model_config, config, model_name);
+      spdlog::info("Register MatmulModel (MatMul test): {}", model_name);
+      simulator->register_model(std::move(model));
     }
     else {
       std::string model_name = model_config["name"];

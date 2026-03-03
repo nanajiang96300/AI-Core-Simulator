@@ -1,0 +1,13 @@
+{
+  "models": [
+    {
+      "name": "newton_schulz_128x128",
+      "batch_size": 96,
+      "matrix_m": 128,
+      "matrix_k": 128,
+      "attributes": {
+        "iterations": "10"
+      }
+    }
+  ]
+}

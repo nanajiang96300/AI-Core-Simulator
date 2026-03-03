@@ -16,6 +16,8 @@
 #include "BiasGelu.h"
 // #include "MatMul.h"
 #include "MaxPool.h"
+#include "NewtonSchulzOp.h"
+#include "SeriesInverseOp.h"
 
 SimulationConfig OperationFactory::_config = SimulationConfig();
 
@@ -55,6 +57,12 @@ std::unique_ptr<Operation> OperationFactory::create_operation(
     return std::make_unique<BiasGelu>(_config, model, node_proto, target_core);
   } else if (node_proto.op_type() == "ReorderOutput") {
     return std::make_unique<Dummy>(_config, model, node_proto, target_core);
+  } else if (node_proto.op_type() == "NewtonSchulz") {
+    // Custom matrix-inverse op implemented via Newton-Schulz iterations.
+    return std::make_unique<NewtonSchulzOp>(_config, model, node_proto, target_core);
+  } else if (node_proto.op_type() == "SeriesInverse") {
+    // Alternative matrix-inverse op implemented via Neumann series.
+    return std::make_unique<SeriesInverseOp>(_config, model, node_proto, target_core);
   }
   spdlog::warn("Node Proto optype \"{}\" returned dummy operator!",
                node_proto.op_type().c_str());
@@ -94,6 +102,10 @@ std::unique_ptr<Operation> OperationFactory::copy_operation(Operation* op) {
     return std::make_unique<BiasGelu>(*dynamic_cast<BiasGelu*>(op));
   } else if (op->get_optype() == "ReorderOutput") {
     return std::make_unique<Dummy>(*dynamic_cast<Dummy*>(op));
+  } else if (op->get_optype() == "NewtonSchulz") {
+    return std::make_unique<NewtonSchulzOp>(*dynamic_cast<NewtonSchulzOp*>(op));
+  } else if (op->get_optype() == "SeriesInverse") {
+    return std::make_unique<SeriesInverseOp>(*dynamic_cast<SeriesInverseOp*>(op));
   }
   spdlog::warn("Node Proto optype \"{}\" returned dummy operator!", op->get_optype());
   return std::make_unique<Dummy>(*dynamic_cast<Dummy*>(op));

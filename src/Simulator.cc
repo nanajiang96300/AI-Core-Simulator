@@ -1,4 +1,5 @@
 #include "Simulator.h"
+#include "TraceLogger.h"
 
 #include <filesystem>
 #include <string>
@@ -109,6 +110,20 @@ void Simulator::cycle() {
   ModelStat model_stat;
   uint32_t tile_count;
   bool is_accum_tile;
+
+  // Optional safety guard: limit maximum core cycles to avoid infinite spins
+  // when a model or operator is misconfigured and makes no forward progress.
+  // Usage: export ONNXIM_MAX_CORE_CYCLES=10000000 (0 or unset disables).
+  uint64_t max_core_cycles = 0;
+  if (const char* max_cycles_env = std::getenv("ONNXIM_MAX_CORE_CYCLES")) {
+    try {
+      max_core_cycles = std::stoull(max_cycles_env);
+    } catch (...) {
+      spdlog::warn("ONNXIM_MAX_CORE_CYCLES is not a valid integer: '{}'", max_cycles_env);
+      max_core_cycles = 0;
+    }
+  }
+
   while (running()) {
     int model_id = 0;
 
@@ -199,6 +214,17 @@ void Simulator::cycle() {
       }
       _icnt->cycle();
     }
+
+    // Watchdog: abort if we exceed the configured cycle limit without
+    // naturally finishing the simulation. This prevents endless spinning
+    // when there is a deadlock or no forward progress.
+    if (max_core_cycles != 0 && _core_cycles >= max_core_cycles) {
+      spdlog::error(
+          "Simulation aborted: reached ONNXIM_MAX_CORE_CYCLES limit ({} cycles). "
+          "Possible deadlock or misconfigured operator/model.",
+          max_core_cycles);
+      break;
+    }
   }
   spdlog::info("Simulation Finished at {} cycle {} us", _core_cycles, _core_cycles / (_config.core_freq) );
   /* Print simulation stats */
@@ -207,6 +233,17 @@ void Simulator::cycle() {
   }
   _icnt->print_stats();
   _dram->print_stat();
+
+  // Dump global instruction-level profiling trace if requested
+  const char* trace_env = std::getenv("ONNXIM_TRACE_CSV");
+  if (trace_env != nullptr) {
+    std::string out_path(trace_env);
+    if (out_path.empty()) {
+      out_path = "profiling_log.csv";
+    }
+    TraceLogger::instance().dump_to_csv(out_path);
+    spdlog::info("TraceLogger: dumped profiling CSV to {}", out_path);
+  }
 }
 
 void Simulator::register_model(std::unique_ptr<Model> model) {

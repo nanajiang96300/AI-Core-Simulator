@@ -97,7 +97,7 @@ Operation::Operation(SimulationConfig config, Model* model,
     : _config(config), _model(model) ,_name(name), _attributes(attribute) {
   _id = generate_id();
   _finish = false;
-  target_core = target_core;
+  this->target_core = target_core;
   Ndim = 0;
   Cdim = 3;
   Hdim = 1;

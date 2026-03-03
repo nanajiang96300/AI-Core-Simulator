@@ -123,6 +123,25 @@ bool SystolicWS::can_issue_compute(std::unique_ptr<Instruction>& inst) {
 }
 
 cycle_type SystolicWS::get_inst_compute_cycles(std::unique_ptr<Instruction>& inst) {
+  if (_config.core_config[_id].enable_ascend_cube_model) {
+    const uint32_t cube_m = std::max(1u, _config.core_config[_id].cube_m);
+    const uint32_t cube_n = std::max(1u, _config.core_config[_id].cube_n);
+    const uint32_t cube_k = std::max(1u, _config.core_config[_id].cube_k);
+    const uint32_t base_latency = _config.core_config[_id].cube_base_latency;
+
+    const uint32_t tile_m = std::max(1u, inst->tile_m);
+    const uint32_t tile_n = std::max(1u, inst->tile_n);
+    const uint32_t tile_k = std::max(1u, inst->tile_k);
+
+    const cycle_type blocks_m = ceil_div(tile_m, cube_m);
+    const cycle_type blocks_n = ceil_div(tile_n, cube_n);
+    const cycle_type blocks_k = ceil_div(tile_k, cube_k);
+    const cycle_type cube_steps = blocks_m * blocks_n * blocks_k;
+    const cycle_type pipeline_fill_drain = cube_m + cube_n - 2;
+
+    return base_latency + pipeline_fill_drain + std::max<cycle_type>(cube_steps, 1);
+  }
+
   return _config.core_config[_id].core_height + _config.core_config[_id].core_width - 2 + MAX(inst->compute_size, 4);
 }
 
@@ -160,6 +179,10 @@ cycle_type SystolicWS::get_vector_compute_cycles(std::unique_ptr<Instruction>& i
       return vec_op_iter * _config.core_config[_id].div_latency;
     case Opcode::EXP:
       return vec_op_iter * _config.core_config[_id].exp_latency;
+    case Opcode::PIPE_BARRIER:
+      // Synthetic barrier/NOP: occupy the vector pipeline for 1 cycle
+      // to make barriers visible in traces without adding real work.
+      return 1;
     
   }
   spdlog::info("not configured operation. {}", inst->id);

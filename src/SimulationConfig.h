@@ -16,6 +16,13 @@ struct CoreConfig {
   uint32_t core_width;
   uint32_t core_height;
 
+  /* Ascend-like Cube compute model (P0) */
+  bool enable_ascend_cube_model = false;
+  uint32_t cube_m = 16;
+  uint32_t cube_n = 16;
+  uint32_t cube_k = 16;
+  uint32_t cube_base_latency = 1;
+
   /* Vector config*/
   uint32_t vector_process_bit;
   uint32_t layernorm_latency = 1;

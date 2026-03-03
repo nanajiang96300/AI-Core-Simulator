@@ -1,3 +1,6 @@
+#ifndef SYSTOLIC_WS_H
+#define SYSTOLIC_WS_H
+
 #include "Core.h"
 
 class SystolicWS : public Core {
@@ -13,3 +16,5 @@ class SystolicWS : public Core {
   uint32_t _stat_systolic_preload_issue_count = 0;
   cycle_type get_vector_compute_cycles(std::unique_ptr<Instruction>& inst);
 };
+
+#endif // SYSTOLIC_WS_H

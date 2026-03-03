@@ -2,6 +2,7 @@
 #include "SystolicWS.h"
 #include "SystolicOS.h"
 
+#include "TraceLogger.h"
 #include "helper/HelperFunctions.h"
 
 std::unique_ptr<Core> Core::create(uint32_t id, SimulationConfig config) {
@@ -185,6 +186,7 @@ void Core::pop_memory_request() {
 
 void Core::push_memory_response(MemoryAccess *response) {
   assert(!response->request);  // can only push response
+  // Update SRAM state first.
   if (response->write) {
     _waiting_write_reqs--;
   } else if (response->spad_address >= ACCUM_SPAD_BASE) {
@@ -192,6 +194,27 @@ void Core::push_memory_response(MemoryAccess *response) {
   } else {
     assert(_spad.check_allocated(response->spad_address, response->buffer_id));
     _spad.fill(response->spad_address, response->buffer_id);
+  }
+
+  // Profiling: record memory transfer lifetime as seen by the core.
+  // We approximate the end time as the current core cycle when the
+  // response is consumed.
+  const cycle_type start = response->start_cycle;
+  const cycle_type end = _core_cycle;
+  if (end >= start) {
+    if (response->write) {
+      TraceLogger::log_event(
+          fmt::format("Core{}_MTE3", _id),
+          "Store",
+          start,
+          end);
+    } else {
+      TraceLogger::log_event(
+          fmt::format("Core{}_MTE2", _id),
+          "Load",
+          start,
+          end);
+    }
   }
   delete response;
 }
@@ -288,6 +311,12 @@ void Core::finish_compute_pipeline(){
     spdlog::trace("Compute size {} tile m {} tile k {} tile n {}", inst->compute_size, inst->tile_m, inst->tile_k, inst->tile_n);
     spdlog::trace("Compute size {} , compute time {}", compute_size, inst->finish_cycle - inst->start_cycle);
     _stat_matmul_cycle += compute_size;
+    // Profiling: record CubeCore / GEMM instruction lifetime
+    TraceLogger::log_event(
+        fmt::format("Core{}_Cube", _id),
+        inst->id.empty() ? "GEMM" : inst->id,
+        inst->start_cycle,
+        inst->finish_cycle);
     _compute_pipeline.pop();
   }
 }
@@ -313,6 +342,12 @@ void Core::finish_vector_pipeline() {
       
     if(inst->last_inst)
       inst->my_tile->inst_finished = true;
+    // Profiling: record VectorCore instruction lifetime
+    TraceLogger::log_event(
+        fmt::format("Core{}_Vector", _id),
+        inst->id.empty() ? "VectorOp" : inst->id,
+        inst->start_cycle,
+        inst->finish_cycle);
     _vector_pipeline.pop();
   }
 }
