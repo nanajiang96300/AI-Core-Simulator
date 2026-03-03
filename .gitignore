@@ -1,3 +1,36 @@
 models/*
 model_lists/*
-build/*
+
+# Build directories
+build/
+cmake-build-*/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# C/C++ compilation artifacts
+*.o
+*.obj
+*.so
+*.so.*
+*.a
+*.lib
+*.dll
+*.dylib
+*.exe
+*.out
+
+# Test/coverage artifacts
+*.gcda
+*.gcno
+*.gcov
+
+# Python virtual env / caches
+venv/
+.venv/
+__pycache__/
+*.pyc
