@@ -143,7 +143,7 @@ cmake --build build -j$(nproc)
 3. 在 `OperationFactory` 注册 `op_type -> C++ class`
 4. 确认 CMake 能编译到新源文件
 
-## 6.2 开发路径 B：纯 C++ 模型接入（推荐做通信算子）
+## 6.2 开发路径 B：纯 C++ 模型接入
 
 1. 在 `src/models/` 新增模型（如 `MatmulModel`）
 2. 在模型内创建 Tensor + Operation 图
@@ -444,6 +444,31 @@ output_shape = [batch, M, N]
 - 牛顿优化迭代日志：`DOCS/NEWTON_SCHULZ_OPT_LOG.md`
 - ping-pong 分析：`DOCS/NEWTON_SCHULZ_PINGPONG_REPORT.md`
 - MMSE/缩放实验：`DOCS/MMSE_SCALING_BASELINE.md`
+
+---
+
+## 13. 上游来源声明与许可证合规
+
+### 13.1 上游来源（Attribution）
+
+本项目基于上游仓库 **ONNXim** 进行二次开发与工程化扩展：
+
+- 上游仓库：`https://github.com/PSAL-POSTECH/ONNXim`
+- 本仓库定位：在 ONNXim 的周期级仿真框架基础上，扩展通信相关算子/NPU 工作流（如 Newton–Schulz、MMSE、Series-Inverse、MatMul 等）
+
+为保证可追溯性，本仓库保留了对上游代码来源的说明与许可证文本。
+
+### 13.2 许可证合规说明（MIT）
+
+本仓库沿用并保留 `LICENSE`（MIT License）文本。根据 MIT 许可证要求：
+
+1. 任何复制、分发或再发布的软件副本中，均需包含原版权声明与许可证声明；
+2. 软件按 “AS IS” 提供，不附带任何明示或默示担保；
+3. 对本仓库新增/修改部分的贡献，不改变上游代码既有版权与许可条款。
+
+### 13.3 第三方组件说明
+
+`extern/` 目录包含多个第三方子组件（如 `booksim`、`protobuf`、`ramulator*` 等），其许可证可能与主仓库不同。使用、分发或二次发布时，请分别查阅对应子组件目录内的许可证/声明文件并遵循其条款。
 
 ---
 
