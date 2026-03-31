@@ -1,0 +1,7 @@
+=== BER Validation: Cholesky-ISO flow vs Exact vs LDL ===
+nr=64, nt=16, n_sc=8, batch=4, trials=2, pilot_len=16, block_size=2
+SNR=  0.0 dB | BER exact/iso/ldl = 2.651367e-01/2.651367e-01/2.651367e-01 | SE exact/iso/ldl = 31.4026/31.4026/31.4026 | inv_relerr iso/ldl = 2.192e-16/2.893e-16
+SNR=  5.0 dB | BER exact/iso/ldl = 1.049805e-01/1.049805e-01/1.049805e-01 | SE exact/iso/ldl = 54.7738/54.7738/54.7738 | inv_relerr iso/ldl = 2.118e-16/3.044e-16
+SNR= 10.0 dB | BER exact/iso/ldl = 8.789062e-03/8.789062e-03/8.789062e-03 | SE exact/iso/ldl = 79.9475/79.9475/79.9475 | inv_relerr iso/ldl = 2.211e-16/2.914e-16
+SNR= 15.0 dB | BER exact/iso/ldl = 0.000000e+00/0.000000e+00/0.000000e+00 | SE exact/iso/ldl = 106.4327/106.4327/106.4327 | inv_relerr iso/ldl = 2.239e-16/2.959e-16
+SNR= 20.0 dB | BER exact/iso/ldl = 0.000000e+00/0.000000e+00/0.000000e+00 | SE exact/iso/ldl = 132.5290/132.5290/132.5290 | inv_relerr iso/ldl = 2.157e-16/2.924e-16

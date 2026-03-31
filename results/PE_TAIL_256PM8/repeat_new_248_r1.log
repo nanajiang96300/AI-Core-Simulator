@@ -1,0 +1,964 @@
+[2026-03-25 10:13:58.659] [info] CPU 0: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 1: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 2: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 3: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 4: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 5: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 6: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 7: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 8: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 9: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 10: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 11: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 12: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 13: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 14: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 15: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 16: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 17: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 18: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 19: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 20: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 21: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 22: Partition 0
+[2026-03-25 10:13:58.659] [info] CPU 23: Partition 0
+[2026-03-25 10:13:58.659] [info] Running in MatMul test mode (MatmulModel)
+[2026-03-25 10:13:58.659] [info] Simulator Configuration:
+[2026-03-25 10:13:58.659] [info] [Core 0] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 1] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 2] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 3] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 4] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 5] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 6] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 7] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 8] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 9] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 10] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 11] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 12] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 13] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 14] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 15] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 16] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 17] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 18] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 19] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 20] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 21] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 22] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] [Core 23] Systolic Array Throughput: 14745 GFLOPS, Spad size: 262144 KB, Accumulator size: 262144 KB
+[2026-03-25 10:13:58.659] [info] DRAM Bandwidth 2457 GB/s
+[2026-03-25 10:13:58.659] [info] Ramulator2 config: ./configs/../configs/ramulator2_configs/HBM2.yaml
+[2026-03-25 10:13:58.666] [info] Initialize SimpleInterconnect
+[2026-03-25 10:13:58.674] [info] Register MatmulModel (MatMul test): matmul_tail_248x32x248
+[2026-03-25 10:13:58.674] [info] ======Start Simulation=====
+[2026-03-25 10:13:58.674] [info] [GEMM] spad_size: 268435456 accum_size: 268435456
+[2026-03-25 10:13:58.674] [info] [GEMM] required_sram_size: 32768 required_accum_size: 131072
+[2026-03-25 10:13:58.674] [info] [GEMM] Used gemmini gemm mapping: Total N:248 C:32 M:248, Outer N:1 C:1 M:1, Inner N:256 C:32 M:256
+[2026-03-25 10:13:58.675] [info] [GemmWs] Keys K = 32, N = 248, M = 248
+[2026-03-25 10:13:58.675] [info] [GemmWS]: total 0.003936256 GFLOPs, 0.000154752 GB
+[2026-03-25 10:13:58.675] [info] [GemmWS]: Theoretical time(ms): 0.0002669552827683219 Compute time: 0.0002669552827683219 Memory time: 6.298412102978546e-05
+[2026-03-25 10:13:58.675] [info] MatmulModel initialization time: 0.000684 seconds
+[2026-03-25 10:13:58.675] [info] Schedule model: matmul_tail_248x32x248 at 833 us
+[2026-03-25 10:13:58.675] [info] MODEL matmul_tail_248x32x248 Scheduled, Total Request: 1
+[2026-03-25 10:13:58.675] [info] executable layer count 1
+[2026-03-25 10:13:58.675] [info] Start layer matmul_tail_248x32x248.Matmul
+[2026-03-25 10:13:58.675] [info] HBM2-CH_0: BW utilization 0% (0 reads, 0 writes)
+[2026-03-25 10:13:59.328] [info] Layer matmul_tail_248x32x248.Matmul finish at 8275
+[2026-03-25 10:13:59.328] [info] Total compute time 8275
+[2026-03-25 10:13:59.328] [info] Model[matmul_tail_248x32x248] Request: 0 us, Start: 0 us, finish:6 us, Current Cycle:8275
+[2026-03-25 10:13:59.328] [info] No total_seq_len!
+[2026-03-25 10:13:59.350] [info] Simulation Finished at 8534 cycle 7 us
+[2026-03-25 10:13:59.350] [info] Core [0] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [0] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [0] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [0] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [0] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [1] : MatMul active cycle 7688 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [1] : Memory unit idle cycle 7976 Systolic bubble cycle 0 Core idle cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [1] : Systolic Array Utilization(%) 96.18 (90.09% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [1] : Systolic Inst Issue Count : 512
+[2026-03-25 10:13:59.350] [info] Core [1] : Systolic PRELOAD Issue Count : 512
+[2026-03-25 10:13:59.350] [info] Core [2] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [2] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [2] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [2] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [2] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [3] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [3] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [3] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [3] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [3] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [4] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [4] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [4] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [4] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [4] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [5] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [5] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [5] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [5] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [5] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [6] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [6] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [6] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [6] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [6] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [7] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [7] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [7] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [7] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [7] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [8] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [8] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [8] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [8] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [8] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [9] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [9] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [9] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [9] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [9] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [10] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [10] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [10] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [10] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [10] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [11] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [11] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [11] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [11] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [11] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [12] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [12] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [12] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [12] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [12] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [13] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [13] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [13] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [13] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [13] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [14] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [14] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [14] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [14] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [14] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [15] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [15] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [15] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [15] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [15] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [16] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [16] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [16] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [16] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [16] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [17] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [17] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [17] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [17] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [17] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [18] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [18] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [18] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [18] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [18] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [19] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [19] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [19] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [19] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [19] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [20] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [20] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [20] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [20] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [20] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [21] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [21] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [21] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [21] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [21] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [22] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [22] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [22] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [22] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [22] : Systolic PRELOAD Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [23] : MatMul active cycle 0 Vector active cycle 0 
+[2026-03-25 10:13:59.350] [info] Core [23] : Memory unit idle cycle 8534 Systolic bubble cycle 0 Core idle cycle 8534 
+[2026-03-25 10:13:59.350] [info] Core [23] : Systolic Array Utilization(%) 0.00 (0.00% PE util), Vector Unit Utilization(%) 0.00, Total cycle: 8534
+[2026-03-25 10:13:59.350] [info] Core [23] : Systolic Inst Issue Count : 0
+[2026-03-25 10:13:59.350] [info] Core [23] : Systolic PRELOAD Issue Count : 0
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.350] [info] Row hits: 127, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 123
+  total_num_read_requests: 14
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+[2026-03-25 10:13:59.350] [info] HBM2-CH_0: avg BW utilization 1% (14 reads, 123 writes)
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.350] [info] Row hits: 133, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 127
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.350] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 126, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 14
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 133, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 128
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 132, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 127
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 128, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 126
+  total_num_read_requests: 14
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 123
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 128, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 125
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 128, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 125
+  total_num_read_requests: 14
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 131, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 125
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 123
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 123
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 131, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 126
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 128, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 131, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 125
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 131, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 126
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 126, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 120
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 126, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 120
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 131, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 126
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 129, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 123
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 132, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 126
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 125
+  total_num_read_requests: 15
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 130, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 124
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+Frontend:
+  impl: GEM5
+
+[2026-03-25 10:13:59.351] [info] Row hits: 128, Row misses: 10, Row conflicts: 0
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 122
+  total_num_read_requests: 16
+  memory_system_cycles: 8534
+  DRAM:
+    impl: HBM2
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+
+[2026-03-25 10:13:59.352] [info] TraceLogger: dumped profiling CSV to results/PE_TAIL_256PM8/repeat_new_248_r1.csv
+[2026-03-25 10:13:59.352] [info] Simulation time: 0.694018 seconds
+[2026-03-25 10:13:59.352] [info] Total tile: 1, simulated tile per seconds(TPS): inf

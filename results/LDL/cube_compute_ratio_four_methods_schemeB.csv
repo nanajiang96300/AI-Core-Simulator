@@ -1,0 +1,5 @@
+method,cube_compute_cycles,cube_wait_cycles,compute_ratio_cycles,cube_compute_events,cube_wait_events,compute_ratio_events
+Cholesky,4562112,24679818,0.156013,142272,138302,0.507075
+LDL,550848,120167,0.820918,16704,5752,0.743855
+DeepUnfold,117216,85937,0.576984,2592,2578,0.501354
+DeepUnfold-Opt,117216,173016,0.403870,2592,2582,0.500966

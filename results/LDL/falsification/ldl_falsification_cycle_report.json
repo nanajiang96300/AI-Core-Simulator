@@ -1,0 +1,33 @@
+{
+  "expected": {
+    "GEMM_PRELOAD_total": 4896,
+    "ADD_total": 3456,
+    "DIV_total": 768,
+    "BARRIER_total": 2688
+  },
+  "observed": {
+    "GEMM_PRELOAD_total": 4896,
+    "ADD_total": 3456,
+    "DIV_total": 768,
+    "BARRIER_total": 2688
+  },
+  "pass_counts": true,
+  "cube_duration_hist": {
+    "32": 4800,
+    "35": 96
+  },
+  "vector_duration_hist": {
+    "1": 6144,
+    "4": 768
+  },
+  "cube_family_counts": {
+    "GRAM": 96,
+    "D_UPDATE": 768,
+    "L_UPDATE": 672,
+    "BWD_OFF_MUL": 2688,
+    "BWD_DIAG_MUL": 672
+  },
+  "pass_duration_cube": true,
+  "pass_duration_vector": true,
+  "overall_pass": true
+}

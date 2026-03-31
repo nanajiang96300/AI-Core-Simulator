@@ -1,0 +1,2 @@
+snr_db,ber_oracle_mmse,ber_exact_mmse,ber_ldl,se_oracle_mmse,se_exact_mmse,se_ldl,recon_error
+0.0,0.0,0.234375,0.234375,90.50051047945868,32.443179350950054,32.523864349779075,0.003609657007367121

@@ -1,0 +1,4 @@
+case,global_max_end,core0_max_end,core0_cube_share_pct,core0_vector_share_pct,core0_mte2_share_pct,core0_wait_share_pct,core0_mte3_share_pct
+CHOL_BLOCK_OPT,3404,3396,2.07,15.54,72.41,1.95,8.05
+LDL_STANDARD_NOBLOCK,4290,4282,1.1,16.87,72.85,1.01,8.17
+LDL_BLOCK_MODERATE3,3032,2962,11.53,8.0,62.53,9.68,8.25

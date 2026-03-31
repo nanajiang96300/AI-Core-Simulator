@@ -1,0 +1,4 @@
+case,global_max_end,core0_max_end,core0_cube_share_pct,core0_vector_share_pct,core0_mte2_share_pct,core0_wait_share_pct,core0_mte3_share_pct
+CHOLESKY,6284,6276,1.88,23.2,65.83,1.77,7.31
+LDL,4290,4282,1.1,16.87,72.85,1.01,8.17
+LDL_OPT,3032,2962,11.53,8.0,62.53,9.68,8.25

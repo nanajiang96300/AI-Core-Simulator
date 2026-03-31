@@ -1,0 +1,9 @@
+[progress] SNR 10.0 dB (1/1) started...
+[progress] SNR 10.0 dB done in 1.48s, elapsed 1.48s
+LDL quality evaluation finished.
+Generated files:
+- results/LDL/falsification/quality_check/ldl_quality_metrics.csv
+- results/LDL/falsification/quality_check/ldl_ber_vs_snr.png
+- results/LDL/falsification/quality_check/ldl_se_vs_snr.png
+- results/LDL/falsification/quality_check/ldl_recon_error_vs_snr.png
+- results/LDL/falsification/quality_check/ldl_quality_report.md

@@ -1,0 +1,18 @@
+nohup: ignoring input
+[progress] SNR 0.0 dB (1/5) started...
+[progress] SNR 0.0 dB done in 79.24s, elapsed 79.24s
+[progress] SNR 5.0 dB (2/5) started...
+[progress] SNR 5.0 dB done in 79.34s, elapsed 158.58s
+[progress] SNR 10.0 dB (3/5) started...
+[progress] SNR 10.0 dB done in 78.60s, elapsed 237.19s
+[progress] SNR 15.0 dB (4/5) started...
+[progress] SNR 15.0 dB done in 78.36s, elapsed 315.55s
+[progress] SNR 20.0 dB (5/5) started...
+[progress] SNR 20.0 dB done in 79.66s, elapsed 395.21s
+LDL quality evaluation finished.
+Generated files:
+- results/LDL/quality_rayleigh_ce_fp16/ldl_quality_metrics.csv
+- results/LDL/quality_rayleigh_ce_fp16/ldl_ber_vs_snr.png
+- results/LDL/quality_rayleigh_ce_fp16/ldl_se_vs_snr.png
+- results/LDL/quality_rayleigh_ce_fp16/ldl_recon_error_vs_snr.png
+- results/LDL/quality_rayleigh_ce_fp16/ldl_quality_report.md

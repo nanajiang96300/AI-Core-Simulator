@@ -1,0 +1,7 @@
+mode,M,wall_span_from_trace,sim_finished_cycle,cube_compute_events,cube_wait_events,cube_compute_cycles,cube_wait_cycles,cube_eta_compute_over_compute_plus_wait,cube_unique_durations
+new,248,8533,8534,512,512,16384,112904,0.126725,32
+old,248,8547,8548,512,512,23296,106200,0.179897,38;46
+new,256,8546,8547,512,512,16384,112904,0.126725,32
+old,256,8560,8561,512,512,23552,105960,0.181852,46
+new,264,9656,9657,578,578,18496,127622,0.126583,32
+old,264,9670,9671,578,578,26316,120010,0.179845,38;46
