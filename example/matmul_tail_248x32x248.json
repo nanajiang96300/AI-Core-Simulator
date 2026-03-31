@@ -1,0 +1,11 @@
+{
+  "models": [
+    {
+      "name": "matmul_tail_248x32x248",
+      "batch_size": 1,
+      "matrix_m": 248,
+      "matrix_k": 32,
+      "matrix_n": 248
+    }
+  ]
+}

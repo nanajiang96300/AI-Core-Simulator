@@ -10,6 +10,13 @@
 #include "models/NewtonSchulzModel.h"
 #include "models/NewtonSchulzOptModel.h"
 #include "models/MMSEModel.h"
+#include "models/LDLModel.h"
+#include "models/LDLNoBlockModel.h"
+#include "models/DeepUnfoldModel.h"
+#include "models/DeepUnfoldNPUOptModel.h"
+#include "models/CholeskyModel.h"
+#include "models/CholeskyNoBlockModel.h"
+#include "models/CholeskyChainModel.h"
 #include "models/SeriesInverseModel.h"
 #include "models/MatmulModel.h"
 
@@ -88,6 +95,27 @@ int main(int argc, char** argv) {
   } else if (mode == "mmse_test") {
     spdlog::info("Running in MMSE test mode (MMSEModel)");
     language_mode = false;
+  } else if (mode == "ldl_test") {
+    spdlog::info("Running in LDL test mode (LDLModel)");
+    language_mode = false;
+  } else if (mode == "ldl_noblock_test") {
+    spdlog::info("Running in LDL no-block test mode (LDLNoBlockModel)");
+    language_mode = false;
+  } else if (mode == "deepunfold_test") {
+    spdlog::info("Running in DeepUnfold test mode (DeepUnfoldModel)");
+    language_mode = false;
+  } else if (mode == "deepunfold_opt_test") {
+    spdlog::info("Running in DeepUnfold OPT test mode (DeepUnfoldNPUOptModel)");
+    language_mode = false;
+  } else if (mode == "cholesky_test") {
+    spdlog::info("Running in Cholesky baseline test mode (CholeskyModel)");
+    language_mode = false;
+  } else if (mode == "cholesky_noblock_test") {
+    spdlog::info("Running in Cholesky non-block test mode (CholeskyNoBlockModel)");
+    language_mode = false;
+  } else if (mode == "cholesky_chain_test") {
+    spdlog::info("Running in Cholesky chain test mode (CholeskyChainModel)");
+    language_mode = false;
   } else if (mode == "series_inverse_test") {
     spdlog::info("Running in Series-inverse test mode (SeriesInverseModel)");
     language_mode = false;
@@ -156,6 +184,49 @@ int main(int argc, char** argv) {
       std::string model_name = model_config["name"];
       auto model = std::make_unique<MMSEModel>(model_config, config, model_name);
       spdlog::info("Register MMSEModel (MMSE test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "ldl_test") {
+      // LDL decomposition / inverse test: pure C++ graph, no ONNX
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<LDLModel>(model_config, config, model_name);
+      spdlog::info("Register LDLModel (LDL test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "ldl_noblock_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<LDLNoBlockModel>(model_config, config, model_name);
+      spdlog::info("Register LDLNoBlockModel (LDL no-block test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "deepunfold_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<DeepUnfoldModel>(model_config, config, model_name);
+      spdlog::info("Register DeepUnfoldModel (DeepUnfold test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "deepunfold_opt_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<DeepUnfoldNPUOptModel>(model_config, config, model_name);
+      spdlog::info("Register DeepUnfoldNPUOptModel (DeepUnfold OPT test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "cholesky_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<CholeskyModel>(model_config, config, model_name);
+      spdlog::info("Register CholeskyModel (Cholesky baseline test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "cholesky_noblock_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<CholeskyNoBlockModel>(model_config, config, model_name);
+      spdlog::info("Register CholeskyNoBlockModel (Cholesky non-block test): {}", model_name);
+      simulator->register_model(std::move(model));
+    }
+    else if (mode == "cholesky_chain_test") {
+      std::string model_name = model_config["name"];
+      auto model = std::make_unique<CholeskyChainModel>(model_config, config, model_name);
+      spdlog::info("Register CholeskyChainModel (Cholesky chain test): {}", model_name);
       simulator->register_model(std::move(model));
     }
     else if (mode == "series_inverse_test") {

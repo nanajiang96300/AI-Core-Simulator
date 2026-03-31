@@ -1,0 +1,14 @@
+{
+    "models": [
+        {
+            "name": "cholesky_256x32_aligned",
+            "batch_size": 96,
+            "matrix_m": 256,
+            "matrix_k": 32,
+            "attributes": {
+                "block_size": "2",
+                "solve_steps": "1"
+            }
+        }
+    ]
+}

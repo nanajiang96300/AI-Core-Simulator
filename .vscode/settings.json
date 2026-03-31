@@ -1,3 +1,9 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "chat.tools.terminal.autoApprove": {
+        "/.*/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

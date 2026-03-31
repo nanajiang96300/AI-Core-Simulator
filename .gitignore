@@ -3,6 +3,7 @@ model_lists/*
 
 # Build directories
 build/
+build*/
 cmake-build-*/
 
 # CMake generated files

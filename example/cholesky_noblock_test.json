@@ -1,0 +1,10 @@
+{
+    "models": [
+        {
+            "name": "cholesky_noblock_64x16",
+            "batch_size": 96,
+            "matrix_m": 64,
+            "matrix_k": 16
+        }
+    ]
+}

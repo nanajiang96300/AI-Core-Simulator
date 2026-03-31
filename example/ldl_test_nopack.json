@@ -1,0 +1,15 @@
+{
+    "models": [
+        {
+            "name": "ldl_64x16_nopack",
+            "batch_size": 96,
+            "matrix_m": 64,
+            "matrix_k": 16,
+            "attributes": {
+                "block_size": "2",
+                "bwd_steps": "1",
+                "pack_blocks": "1"
+            }
+        }
+    ]
+}

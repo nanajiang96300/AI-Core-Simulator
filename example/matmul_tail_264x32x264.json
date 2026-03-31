@@ -1,0 +1,11 @@
+{
+  "models": [
+    {
+      "name": "matmul_tail_264x32x264",
+      "batch_size": 1,
+      "matrix_m": 264,
+      "matrix_k": 32,
+      "matrix_n": 264
+    }
+  ]
+}

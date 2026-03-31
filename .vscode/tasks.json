@@ -1,0 +1,73 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "LDL: Full Eval (visible)",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "scripts/evaluate_ldl_quality.py",
+                "--nr",
+                "64",
+                "--nt",
+                "16",
+                "--n-sc",
+                "168",
+                "--batch",
+                "16",
+                "--trials",
+                "2",
+                "--block-size",
+                "2",
+                "--pilot-len",
+                "16",
+                "--channel-model",
+                "rayleigh",
+                "--num-format",
+                "fp16",
+                "--reciprocal-mode",
+                "approx",
+                "--trunc-mantissa-bits",
+                "8",
+                "--modulation",
+                "16qam",
+                "--mac-chunk",
+                "4",
+                "--snr-db=0,5,10,15,20",
+                "--out-dir",
+                "results/LDL/quality_rayleigh_ce_fp16"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "LDL: Tail Result Log",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-lc",
+                "mkdir -p results/LDL/quality_rayleigh_ce_fp16 && touch results/LDL/quality_rayleigh_ce_fp16/run.log && tail -n 200 -f results/LDL/quality_rayleigh_ce_fp16/run.log"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}

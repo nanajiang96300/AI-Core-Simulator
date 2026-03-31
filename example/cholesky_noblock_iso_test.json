@@ -1,0 +1,13 @@
+{
+    "models": [
+        {
+            "name": "cholesky_noblock_64x16_iso",
+            "batch_size": 96,
+            "matrix_m": 64,
+            "matrix_k": 16,
+            "attributes": {
+                "strict_iso_lowering": "1"
+            }
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "models": [
+        {
+            "name": "deepunfold_256x32",
+            "batch_size": 96,
+            "matrix_m": 256,
+            "matrix_k": 32,
+            "attributes": {
+                "layers": "12",
+                "vector_repeats": "1"
+            }
+        }
+    ]
+}

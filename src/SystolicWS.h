@@ -15,6 +15,7 @@ class SystolicWS : public Core {
   uint32_t _stat_systolic_inst_issue_count = 0;
   uint32_t _stat_systolic_preload_issue_count = 0;
   cycle_type get_vector_compute_cycles(std::unique_ptr<Instruction>& inst);
+  cycle_type get_scalar_compute_cycles(std::unique_ptr<Instruction>& inst);
 };
 
 #endif // SYSTOLIC_WS_H

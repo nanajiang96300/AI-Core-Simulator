@@ -36,6 +36,7 @@ class Core {
   virtual void update_stats();
   virtual void finish_compute_pipeline();
   virtual void finish_vector_pipeline();
+  virtual void finish_scalar_pipeline();
   virtual void handle_ld_inst_queue();
   virtual void handle_st_inst_queue();
   virtual cycle_type calculate_add_tree_iterations(uint32_t vector_size);
@@ -65,6 +66,8 @@ class Core {
   /* Vector Unit Params */
   cycle_type _stat_vec_compute_cycle;
   cycle_type _stat_tot_vec_compute_cycle = 0;
+  cycle_type _stat_scalar_compute_cycle;
+  cycle_type _stat_tot_scalar_compute_cycle = 0;
 
   cycle_type _stat_systolic_active_cycle = 0;
   cycle_type _stat_tot_systolic_active_cycle = 0;
@@ -78,6 +81,7 @@ class Core {
 
   std::queue<std::unique_ptr<Instruction>> _compute_pipeline;
   std::queue<std::unique_ptr<Instruction>> _vector_pipeline;
+  std::queue<std::unique_ptr<Instruction>> _scalar_pipeline;
 
   std::queue<std::unique_ptr<Instruction>> _ld_inst_queue;
   std::queue<std::unique_ptr<Instruction>> _st_inst_queue;

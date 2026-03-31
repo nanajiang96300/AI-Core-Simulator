@@ -34,7 +34,7 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _parse_unit(df: pd.DataFrame) -> pd.DataFrame:
+def _parse_unit(df: pd.DataFrame, split_cube_wait_track: bool = False) -> pd.DataFrame:
     # 简单的预处理优化：直接操作 Series 字符串比循环快，但为了兼容性保留逻辑，
     # 这里的瓶颈不在解析，而是在绘图，所以维持原样即可。
     cores: List[str] = []
@@ -50,6 +50,8 @@ def _parse_unit(df: pd.DataFrame) -> pd.DataFrame:
 
         if engine == "Cube":
             engine_label = "CubeCore"
+        elif engine == "Wait":
+            engine_label = "Wait"
         elif engine == "Vector":
             engine_label = "VectorCore"
         elif engine == "MTE2":
@@ -66,6 +68,15 @@ def _parse_unit(df: pd.DataFrame) -> pd.DataFrame:
     df["Core"] = cores
     df["Engine"] = engines
     df["Row"] = rows
+
+    # 方案B：若事件名是 CubeWait，则强制映射到对应 Core 的 Cube 行上单独着色
+    cube_wait_mask = df["Name"].astype(str) == "CubeWait"
+    if cube_wait_mask.any():
+        df.loc[cube_wait_mask, "Engine"] = "CubeWait"
+        if split_cube_wait_track:
+            df.loc[cube_wait_mask, "Row"] = df.loc[cube_wait_mask, "Core"].map(lambda c: f"{c}_CubeWait")
+        else:
+            df.loc[cube_wait_mask, "Row"] = df.loc[cube_wait_mask, "Core"].map(lambda c: f"{c}_CubeCore")
     return df
 
 
@@ -75,7 +86,7 @@ def _build_row_order(df: pd.DataFrame) -> List[str]:
         return int(digits) if digits else 0
 
     cores = sorted(df["Core"].unique(), key=core_index)
-    engine_order = ["CubeCore", "VectorCore", "MTE2 (Load)", "MTE3 (Store)"]
+    engine_order = ["CubeCore", "CubeWait", "VectorCore", "MTE2 (Load)", "MTE3 (Store)"]
 
     existing = set(df["Row"].unique())
     order: List[str] = []
@@ -94,6 +105,31 @@ def main() -> None:
     )
     parser.add_argument("-i", "--input", default="profiling_log.csv", help="Input CSV file")
     parser.add_argument("-o", "--output", default="pipeline_timeline.png", help="Output PNG file")
+    parser.add_argument(
+        "--cube-wait-color",
+        default="#bdbdbd",
+        help="Color for Cube waiting gaps (between consecutive Cube events on the same row)",
+    )
+    parser.add_argument(
+        "--disable-cube-wait",
+        action="store_true",
+        help="Disable Cube wait-gap rendering",
+    )
+    parser.add_argument(
+        "--force-cube-gap-wait",
+        action="store_true",
+        help="Force Scheme-A gap-based Cube wait rendering even when explicit CubeWait events exist",
+    )
+    parser.add_argument(
+        "--split-cube-wait-track",
+        action="store_true",
+        help="Render CubeWait on a separate row per core (CoreX_CubeWait) instead of overlaying on CoreX_CubeCore",
+    )
+    parser.add_argument(
+        "--core-filter",
+        default="",
+        help="Comma-separated cores to keep, e.g. Core0,Core1",
+    )
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
@@ -102,7 +138,15 @@ def main() -> None:
     print("Loading data...")
     df = pd.read_csv(args.input)
     df = _normalize_columns(df)
-    df = _parse_unit(df)
+    df = _parse_unit(df, split_cube_wait_track=args.split_cube_wait_track)
+
+    if args.core_filter.strip():
+        requested_cores = {core.strip() for core in args.core_filter.split(",") if core.strip()}
+        df = df[df["Core"].isin(requested_cores)]
+        if df.empty:
+            raise SystemExit(f"No events left after --core-filter={args.core_filter}")
+
+    has_explicit_cube_wait = (df["Name"].astype(str) == "CubeWait").any()
     
     # 预计算 Duration
     df["Duration"] = df["EndCycle"] - df["StartCycle"]
@@ -118,6 +162,7 @@ def main() -> None:
     # Colors
     color_map = {
         "CubeCore": "#2ca02c",      # green
+        "CubeWait": "#bdbdbd",      # gray
         "VectorCore": "#98df8a",    # light green
         "MTE2 (Load)": "#ff7f7f",   # red
         "MTE3 (Store)": "#1f77b4",  # blue
@@ -134,25 +179,61 @@ def main() -> None:
     # ==========================================
     # 按 "Row" (Y轴位置) 和 "Engine" (颜色) 分组
     # 这样每一组只需要调用一次 broken_barh
-    grouped = df.groupby(["Row", "Engine"])
+    # 先画等待，再画计算，避免等待色覆盖计算色
+    wait_df = df[df["Engine"] == "CubeWait"]
+    other_df = df[df["Engine"] != "CubeWait"]
 
-    for (row_label, engine), group in grouped:
-        y = row_to_y.get(row_label)
-        if y is None:
-            continue
-        
-        # 获取颜色，如果未知类型则用灰色
-        color = color_map.get(engine, "#7f7f7f")
-        
-        # 提取 (start, width) 列表
-        # list(zip(...)) 是极快的数据转换方式
-        xranges = list(zip(group["StartCycle"], group["Duration"]))
-        
-        # 一次性绘制该行、该颜色的所有矩形
-        # edgecolors='none' 非常重要！
-        # 当有几万个小矩形时，描边(edge)会导致严重的锯齿和性能下降，
-        # 去掉描边能让图更清晰且渲染更快。
-        ax.broken_barh(xranges, (y - 0.4, 0.8), facecolors=color, edgecolors='none')
+    for sub_df in [wait_df, other_df]:
+        grouped = sub_df.groupby(["Row", "Engine"])
+        for (row_label, engine), group in grouped:
+            y = row_to_y.get(row_label)
+            if y is None:
+                continue
+            color = color_map.get(engine, "#7f7f7f")
+            xranges = list(zip(group["StartCycle"], group["Duration"]))
+            ax.broken_barh(xranges, (y - 0.4, 0.8), facecolors=color, edgecolors='none')
+
+    # 方案A：不改trace定义，仅在绘图中把 Cube 连续事件之间的空隙视为“等待”并用单独颜色显示
+    enable_gap_wait = (not args.disable_cube_wait) and (args.force_cube_gap_wait or not has_explicit_cube_wait)
+    if enable_gap_wait:
+        cube_df = df[df["Engine"] == "CubeCore"].copy()
+        if not cube_df.empty:
+            for row_label, group in cube_df.groupby("Row"):
+                y = row_to_y.get(row_label)
+                if y is None:
+                    continue
+                ordered = group.sort_values("StartCycle")
+                starts = ordered["StartCycle"].tolist()
+                ends = ordered["EndCycle"].tolist()
+                wait_ranges = []
+                for idx in range(1, len(starts)):
+                    wait_start = ends[idx - 1]
+                    wait_end = starts[idx]
+                    if wait_end > wait_start:
+                        wait_ranges.append((wait_start, wait_end - wait_start))
+                if wait_ranges:
+                    ax.broken_barh(
+                        wait_ranges,
+                        (y - 0.4, 0.8),
+                        facecolors=args.cube_wait_color,
+                        edgecolors="none",
+                        alpha=0.9,
+                        zorder=1,
+                    )
+            # 重新覆盖一层 Cube 计算条，保证计算颜色在等待色之上
+            cube_grouped = cube_df.groupby(["Row", "Engine"])
+            for (row_label, engine), group in cube_grouped:
+                y = row_to_y.get(row_label)
+                if y is None:
+                    continue
+                xranges = list(zip(group["StartCycle"], group["Duration"]))
+                ax.broken_barh(
+                    xranges,
+                    (y - 0.4, 0.8),
+                    facecolors=color_map.get(engine, "#7f7f7f"),
+                    edgecolors="none",
+                    zorder=2,
+                )
 
     # 设置图表格式
     ax.set_yticks(list(row_to_y.values()))

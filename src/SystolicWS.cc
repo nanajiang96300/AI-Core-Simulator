@@ -1,5 +1,7 @@
 #include "SystolicWS.h"
 
+#include "TraceLogger.h"
+
 SystolicWS::SystolicWS(uint32_t id, SimulationConfig config)
     : Core(id, config) {}
 
@@ -10,6 +12,8 @@ void SystolicWS::cycle() {
   finish_compute_pipeline();
   /* Checking Vector compute pipeline */
   finish_vector_pipeline();
+  /* Checking Scalar compute pipeline */
+  finish_scalar_pipeline();
   /* LD in struction queue */
   handle_ld_inst_queue();
   /* EX instruction queue */
@@ -64,15 +68,30 @@ void SystolicWS::cycle() {
           _stat_systolic_preload_issue_count++;
         }
       }
+
+      if (front->start_cycle > _core_cycle) {
+        TraceLogger::log_event(
+            fmt::format("Core{}_Wait", _id),
+            "CubeWait",
+            _core_cycle,
+            front->start_cycle);
+      }
+
       front->finish_cycle = front->start_cycle + get_inst_compute_cycles(front);
       _compute_pipeline.push(std::move(front));
       _stat_systolic_inst_issue_count++;
-    } else {  // vector unit compute
+    } else {
+      const bool is_scalar_op =
+          (front->opcode == Opcode::SCALAR_ADD || front->opcode == Opcode::SCALAR_MUL ||
+           front->opcode == Opcode::SCALAR_DIV || front->opcode == Opcode::SCALAR_SQRT);
       front->start_cycle = _core_cycle;
-      front->finish_cycle =
-          front->start_cycle +
-          get_vector_compute_cycles(front);  // Setting IC as 1 (Might need to modify)
-      _vector_pipeline.push(std::move(front));
+      front->finish_cycle = front->start_cycle +
+                            (is_scalar_op ? get_scalar_compute_cycles(front)
+                                          : get_vector_compute_cycles(front));
+      if (is_scalar_op)
+        _scalar_pipeline.push(std::move(front));
+      else
+        _vector_pipeline.push(std::move(front));
     }
     _ex_inst_queue.pop();
   }
@@ -85,18 +104,23 @@ void SystolicWS::cycle() {
   bool is_running = running();
   bool is_compute_busy = false;
   bool is_vector_busy = false;
+  bool is_scalar_busy = false;
 
   if (!_compute_pipeline.empty() && _compute_pipeline.front()->start_cycle <= _core_cycle)
     is_compute_busy = true;
   if (!_vector_pipeline.empty() && _vector_pipeline.front()->start_cycle <= _core_cycle)
     is_vector_busy = true;
+  if (!_scalar_pipeline.empty() && _scalar_pipeline.front()->start_cycle <= _core_cycle)
+    is_scalar_busy = true;
 
   if (is_compute_busy)
     _stat_systolic_active_cycle++;
   if (is_vector_busy)
     _stat_vec_compute_cycle++;
+  if (is_scalar_busy)
+    _stat_scalar_compute_cycle++;
 
-  if (is_compute_busy || is_vector_busy)
+  if (is_compute_busy || is_vector_busy || is_scalar_busy)
     _stat_compute_cycle++;
 
   if (_request_queue.empty())
@@ -112,6 +136,11 @@ bool SystolicWS::can_issue_compute(std::unique_ptr<Instruction>& inst) {
     return false;
   if (inst->opcode == Opcode::GEMM || inst->opcode == Opcode::GEMM_PRELOAD) {
     if (_compute_pipeline.size() >= _config.core_config[_id].core_height) {
+      return false;
+    }
+  } else if (inst->opcode == Opcode::SCALAR_ADD || inst->opcode == Opcode::SCALAR_MUL ||
+             inst->opcode == Opcode::SCALAR_DIV || inst->opcode == Opcode::SCALAR_SQRT) {
+    if(!_scalar_pipeline.empty()) {
       return false;
     }
   } else {
@@ -179,6 +208,8 @@ cycle_type SystolicWS::get_vector_compute_cycles(std::unique_ptr<Instruction>& i
       return vec_op_iter * _config.core_config[_id].div_latency;
     case Opcode::EXP:
       return vec_op_iter * _config.core_config[_id].exp_latency;
+    case Opcode::SQRT:
+      return vec_op_iter * _config.core_config[_id].scalar_sqrt_latency;
     case Opcode::PIPE_BARRIER:
       // Synthetic barrier/NOP: occupy the vector pipeline for 1 cycle
       // to make barriers visible in traces without adding real work.
@@ -188,6 +219,22 @@ cycle_type SystolicWS::get_vector_compute_cycles(std::unique_ptr<Instruction>& i
   spdlog::info("not configured operation. {}", inst->id);
   // assert(0);
   return 0;
+}
+
+cycle_type SystolicWS::get_scalar_compute_cycles(std::unique_ptr<Instruction>& inst) {
+  switch (inst->opcode) {
+    case Opcode::SCALAR_ADD:
+      return _config.core_config[_id].scalar_add_latency;
+    case Opcode::SCALAR_MUL:
+      return _config.core_config[_id].scalar_mul_latency;
+    case Opcode::SCALAR_DIV:
+      return _config.core_config[_id].div_latency;
+    case Opcode::SCALAR_SQRT:
+      return _config.core_config[_id].scalar_sqrt_latency;
+    default:
+      break;
+  }
+  return 1;
 }
 
 void SystolicWS::print_stats() {

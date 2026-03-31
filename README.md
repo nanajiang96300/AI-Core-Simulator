@@ -92,6 +92,7 @@ cmake --build build -j$(nproc)
 - `newton_schulz_test`
 - `newton_schulz_opt_test`
 - `mmse_test`
+- `ldl_test`
 - `series_inverse_test`
 - `matmul_test`
 
@@ -153,6 +154,7 @@ cmake --build build -j$(nproc)
 当前仓库案例：
 - `NewtonSchulzModel/NewtonSchulzOptModel`
 - `MMSEModel`
+- `LDLModel`
 - `SeriesInverseModel`
 - `MatmulModel`
 
@@ -378,6 +380,25 @@ python3 visualizer_png.py \
   -i results/matmul_256x32x256.csv \
   -o results/matmul_256x32x256.png
 ```
+
+## 10.3 LDL 分解（通信检测预处理仿真）
+
+```bash
+./build/bin/Simulator \
+  --config configs/ascend_910b_quiet.json \
+  --models_list example/ldl_test.json \
+  --mode ldl_test \
+  --log_level info
+```
+
+`example/ldl_test.json` 默认配置：
+- `matrix_m = 64`（信道行维）
+- `matrix_k = 16`（用户数/Gram 维）
+- `batch_size = 96`
+- `attributes.block_size = 2`（2x2 block-LDL）
+- `attributes.bwd_steps = 1`
+
+说明：当前 `LDLDecompOp` 为**执行流/微架构建模版本**，重点覆盖 Gram、正则化、Block-LDL 与回代阶段的访存-计算-同步模式，用于评估 NPU 执行效率与流水重叠；并非复数数值精确求解器。
 
 ---
 

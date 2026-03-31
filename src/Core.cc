@@ -23,6 +23,7 @@ Core::Core(uint32_t id, SimulationConfig config)
       _stat_idle_cycle(0),
       _stat_memory_idle_cycle(0),
       _stat_vec_compute_cycle(0),
+      _stat_scalar_compute_cycle(0),
       _stat_matmul_cycle(0),
       _spad(Sram(config, _core_cycle, false, id)),
       _acc_spad(Sram(config, _core_cycle, true, id)) {
@@ -170,6 +171,7 @@ bool Core::running() {
   running = running || !_compute_pipeline.empty();
   running = running ||
             !_vector_pipeline.empty();  // Vector unit (Might need to modify)
+  running = running || !_scalar_pipeline.empty();
   running = running || _waiting_write_reqs != 0;
   running = running || !_ld_inst_queue.empty();
   running = running || !_st_inst_queue.empty();
@@ -240,19 +242,21 @@ bool Core::can_issue_compute(std::unique_ptr<Instruction>& inst) {
 
 void Core::print_stats() {
   update_stats();
-  spdlog::info(
-      "Core [{}] : MatMul active cycle {} Vector active cycle {} ",
-      _id, _stat_tot_matmul_cycle, _stat_tot_vec_compute_cycle);
+    spdlog::info(
+      "Core [{}] : MatMul active cycle {} Vector active cycle {} Scalar active cycle {} ",
+      _id, _stat_tot_matmul_cycle, _stat_tot_vec_compute_cycle, _stat_tot_scalar_compute_cycle);
 
   spdlog::info(
       "Core [{}] : Memory unit idle cycle {} Systolic bubble cycle {} "
       "Core idle cycle {} ",
       _id, _stat_tot_memory_idle_cycle, _stat_tot_systolic_bubble_cycle, _stat_tot_idle_cycle);
 
-  spdlog::info("Core [{}] : Systolic Array Utilization(%) {:.2f} ({:.2f}% PE util), Vector Unit Utilization(%) {:.2f}, Total cycle: {}",
+    spdlog::info("Core [{}] : Systolic Array Utilization(%) {:.2f} ({:.2f}% PE util), Vector Unit Utilization(%) {:.2f}, Scalar Unit Utilization(%) {:.2f}, Total cycle: {}",
       _id, static_cast<float>(_stat_tot_systolic_active_cycle * 100) / _core_cycle,
       static_cast<float>(_stat_tot_matmul_cycle * 100) / _core_cycle,
-      static_cast<float>(_stat_tot_vec_compute_cycle * 100) / _core_cycle, _core_cycle);
+      static_cast<float>(_stat_tot_vec_compute_cycle * 100) / _core_cycle,
+      static_cast<float>(_stat_tot_scalar_compute_cycle * 100) / _core_cycle,
+      _core_cycle);
 }
 
 void Core::print_current_stats() {
@@ -260,8 +264,8 @@ void Core::print_current_stats() {
   if(_id != 0) 
     level = spdlog::level::debug;
     spdlog::log(level,
-      "Core [{}] : MatMul active cycle {} Vector active cycle {} ",
-      _id, _stat_matmul_cycle, _stat_vec_compute_cycle);
+      "Core [{}] : MatMul active cycle {} Vector active cycle {} Scalar active cycle {} ",
+      _id, _stat_matmul_cycle, _stat_vec_compute_cycle, _stat_scalar_compute_cycle);
 
   spdlog::log(level,
       "Core [{}] : issued tile {} ", _id, _tiles.size());
@@ -270,10 +274,12 @@ void Core::print_current_stats() {
       "Core [{}] : Memory unit idle cycle {} Systolic bubble cycle {} "
       "Core idle cycle {} ",
       _id, _stat_memory_idle_cycle, _stat_systolic_bubble_cycle, _stat_idle_cycle);
-  spdlog::log(level,"Core [{}] : Systolic Array Utilization(%) {:.2f} ({:.2f}% PE util), Vector Unit Utilization(%) {:.2f}, Total cycle: {}",
+  spdlog::log(level,"Core [{}] : Systolic Array Utilization(%) {:.2f} ({:.2f}% PE util), Vector Unit Utilization(%) {:.2f}, Scalar Unit Utilization(%) {:.2f}, Total cycle: {}",
       _id, static_cast<float>(_stat_systolic_active_cycle * 100) / _config.core_print_interval,
       static_cast<float>(_stat_matmul_cycle * 100) / _config.core_print_interval,
-      static_cast<float>(_stat_vec_compute_cycle * 100) / _config.core_print_interval, _core_cycle);
+      static_cast<float>(_stat_vec_compute_cycle * 100) / _config.core_print_interval,
+      static_cast<float>(_stat_scalar_compute_cycle * 100) / _config.core_print_interval,
+      _core_cycle);
   update_stats();
 }
 
@@ -284,6 +290,7 @@ void Core::update_stats() {
   _stat_tot_memory_idle_cycle += _stat_memory_idle_cycle;
   _stat_tot_idle_cycle += _stat_idle_cycle;
   _stat_tot_vec_compute_cycle += _stat_vec_compute_cycle;
+  _stat_tot_scalar_compute_cycle += _stat_scalar_compute_cycle;
   _stat_tot_matmul_cycle += _stat_matmul_cycle;
   _stat_compute_cycle = 0;
   _stat_systolic_active_cycle = 0;
@@ -291,6 +298,7 @@ void Core::update_stats() {
   _stat_memory_idle_cycle = 0;
   _stat_idle_cycle = 0;
   _stat_vec_compute_cycle = 0;
+  _stat_scalar_compute_cycle = 0;
   _stat_matmul_cycle = 0;
 }
 
@@ -349,6 +357,36 @@ void Core::finish_vector_pipeline() {
         inst->start_cycle,
         inst->finish_cycle);
     _vector_pipeline.pop();
+  }
+}
+
+void Core::finish_scalar_pipeline() {
+  if (!_scalar_pipeline.empty() &&
+      _scalar_pipeline.front()->finish_cycle <= _core_cycle) {
+    std::unique_ptr<Instruction> inst = std::move(_scalar_pipeline.front());
+    if (inst->dest_addr >= ACCUM_SPAD_BASE) {
+      if(!_acc_spad.check_allocated(inst->dest_addr, inst->accum_spad_id)) {
+        spdlog::error("Scalar pipeline -> accum");
+        spdlog::error("Destination not allocated {}", inst->dest_addr);
+      }
+      _acc_spad.fill(inst->dest_addr, inst->accum_spad_id);
+    } else {
+      if(!_spad.check_allocated(inst->dest_addr, inst->spad_id)) {
+        spdlog::error("Scalar pipeline -> spad");
+        spdlog::error("Destination not allocated {}", inst->dest_addr);
+      }
+      _spad.fill(inst->dest_addr, inst->spad_id);
+    }
+
+    if(inst->last_inst)
+      inst->my_tile->inst_finished = true;
+
+    TraceLogger::log_event(
+        fmt::format("Core{}_Scalar", _id),
+        inst->id.empty() ? "ScalarOp" : inst->id,
+        inst->start_cycle,
+        inst->finish_cycle);
+    _scalar_pipeline.pop();
   }
 }
 
